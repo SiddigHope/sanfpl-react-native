@@ -32,7 +32,9 @@ export default function TransferPlayerSelection({ navigation, route }:any) {
     } = useFPLStore();
 
     const handleTransfer = (player: any) => {
-
+        makeTransfer(player)
+        setShowModal(false)
+        navigation.goBack()
     }
 
     const selectPlayer = (player: any) => {

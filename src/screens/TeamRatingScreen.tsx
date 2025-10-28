@@ -22,14 +22,6 @@ import { calculateTeamRating, optimizeTeam, useEnrichedPlayers } from '../utils/
 
 export const TeamRatingScreen = () => {
   const navigation = useNavigation();
-  const [selectedPlayer, setSelectedPlayer] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [showTransferModal, setShowTransferModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [futureGameweek, setFutureGameweek] = useState(1);
-  const [currentTeam, setCurrentTeam] = useState(null);
-  const [isOptimizing, setIsOptimizing] = useState(false);
-  const [inBank, setInBank] = useState(0)
 
   const {
     players,
@@ -37,12 +29,22 @@ export const TeamRatingScreen = () => {
     fixtures,
     currentGameweek,
     teamId,
-    userTeam,
+    userTeam: userSquad,
     isLoading,
     error,
     bank,
     fetchUserTeam
   } = useFPLStore();
+
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showTransferModal, setShowTransferModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [futureGameweek, setFutureGameweek] = useState(1);
+  const [currentTeam, setCurrentTeam] = useState(null);
+  const [userTeam, setUserTeam] = useState(userSquad || {});
+  const [isOptimizing, setIsOptimizing] = useState(false);
+  const [inBank, setInBank] = useState(0)
 
   useEffect(() => {
     if (teamId) {
@@ -197,10 +199,33 @@ export const TeamRatingScreen = () => {
     navigation.navigate('TransferPlayerSelection', { selectedPlayer: tempPlayer, currentTeam, inBank, makeTransfer })
   };
 
-  const makeTransfer = (player) => {
-    console.log('====================================');
-    console.log(player?.web_name, selectedPlayer?.web_name);
-    console.log('====================================');
+  const makeTransfer = (inPlayer: any) => {
+    const outPlayer = selectedPlayer
+    const combinedPlayer = { ...selectedPlayer, ...inPlayer }
+    // Example: FPL API gives prices multiplied by 10
+    const outPrice = outPlayer?.now_cost / 10; // e.g. 75 => £7.5m
+    const inPrice = inPlayer.now_cost / 10;
+    const currentBank = inBank / 10;
+
+    const availableFunds = currentBank + outPrice;
+
+    // ✅ Update the bank
+    const newBank = availableFunds - inPrice;
+
+    // ✅ Replace the player in the team
+
+    const updatedPicks = userTeam.picks.map(pick =>
+      pick.element === outPlayer?.id
+        ? { ...pick, element: inPlayer.id }
+        : pick
+    );
+
+    // ✅ Update the user team in your store
+    setUserTeam({
+      ...userTeam,
+      picks: updatedPicks,
+    });
+    setInBank(newBank * 10) // convert back to FPL API scale
   }
 
   const handleSetCaptain = (player) => {
