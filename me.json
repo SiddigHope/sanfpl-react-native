@@ -1,0 +1,34 @@
+{"assists": 2, "birth_date": "1998-07-29", "bonus": 2, "bps": 142, "can_se
+lect": true, "can_transact": true, "chance_of_playing_next_round": null, "chance
+_of_playing_this_round": null, "clean_sheets": 3, "clean_sheets_per_90": 0.41, "
+clearances_blocks_interceptions": 15, "code": 433036, "corners_and_indirect_free
+kicks_order": null, "corners_and_indirect_freekicks_text": "", "cost_change_even
+t": -1, "cost_change_event_fall": 1, "cost_change_start": 2, "cost_change_start_
+fall": -2, "creativity": "158.2", "creativity_rank": 32, "creativity_rank_type":
+ 28, "defensive_contribution": 44, "defensive_contribution_per_90": 5.95, "direc
+t_freekicks_order": null, "direct_freekicks_text": "", "dreamteam_count": 1, "el
+ement_type": 3, "ep_next": "2.5", "ep_this": "2.5", "event_points": 1, "expected
+_assists": "0.56", "expected_assists_per_90": 0.08, "expected_goal_involvements"
+: "1.85", "expected_goal_involvements_per_90": 0.25, "expected_goals": "1.29", "
+expected_goals_conceded": "8.22", "expected_goals_conceded_per_90": 1.11, "expec
+ted_goals_per_90": 0.17, "first_name": "Tijjani", "form": "2.0", "form_rank": 18
+4, "form_rank_type": 87, "goals_conceded": 6, "goals_conceded_per_90": 0.81, "go
+als_scored": 1, "has_temporary_code": false, "ict_index": "43.1", "ict_index_ran
+k": 28, "ict_index_rank_type": 20, "id": 427, "in_dreamteam": false, "influence"
+: "135.4", "influence_rank": 90, "influence_rank_type": 27, "isBenchGoalkeeper":
+ false, "isBenched": false, "minutes": 665, "news": "", "news_added": null, "now
+_cost": 57, "now_cost_rank": 124, "now_cost_rank_type": 81, "opta_code": "p43303
+6", "own_goals": 0, "penalties_missed": 0, "penalties_order": null, "penalties_s
+aved": 0, "penalties_text": "", "photo": "433036.jpg", "pickInfo": {"element": 4
+27, "element_type": 3, "is_captain": false, "is_vice_captain": false, "multiplie
+r": 1, "position": 6}, "points_per_game": "4.0", "points_per_game_rank": 83, "po
+ints_per_game_rank_type": 30, "positionName": "MID", "recoveries": 23, "red_card
+s": 0, "region": 152, "removed": false, "saves": 0, "saves_per_90": 0, "second_n
+ame": "Reijnders", "selected_by_percent": "30.9", "selected_rank": 10, "selected
+_rank_type": 4, "special": false, "squad_number": null, "starts": 8, "starts_per
+_90": 1.08, "status": "a", "tackles": 6, "team": 13, "team_code": 43, "team_join
+_date": "2025-06-10", "team_short_name": "MCI", "threat": "136.0", "threat_rank"
+: 34, "threat_rank_type": 17, "total_points": 32, "transfers_in": 3043042, "tran
+sfers_in_event": 22788, "transfers_out": 1840322, "transfers_out_event": 192583,
+ "value_form": "0.4", "value_season": "5.6", "web_name": "Reijnders", "yellow_ca
+rds": 1}

@@ -1,24 +1,41 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { useEffect } from 'react';
+// import '../src/i18n';
+import { StackNavigator } from '@/src/navigation/StackNavigator';
+import { useLanguageStore } from '../src/stores/languageStore';
+import { useThemeStore } from '../src/stores/themeStore';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const theme = useThemeStore((state) => state.theme);
+  const language = useLanguageStore((state) => state.language);
+
+  useEffect(() => {
+    // Initialize any app-wide configurations here
+  }, []);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <>
+      <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
+      <StackNavigator />
+      {/* <Stack
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: theme === 'dark' ? '#111827' : '#FFFFFF',
+          },
+          headerTintColor: theme === 'dark' ? '#FFFFFF' : '#000000',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          contentStyle: {
+            backgroundColor: theme === 'dark' ? '#111827' : '#FFFFFF',
+          },
+        }}
+      >
+        <Stack.Screen
+          name="(tabs)"
+          options={{ headerShown: false }}
+        />
+      </Stack> */}
+    </>
   );
 }

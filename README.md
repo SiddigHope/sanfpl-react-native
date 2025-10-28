@@ -1,50 +1,124 @@
-# Welcome to your Expo app 👋
+# San FPL - Fantasy Premier League Companion App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A comprehensive Fantasy Premier League companion app built with React Native (Expo) that provides real-time data, statistics, and insights for FPL managers.
 
-## Get started
+## 🌟 Features
 
-1. Install dependencies
+- **Live Data**: Real-time updates from the official FPL API
+- **Team Management**: View and manage your FPL team
+- **Transfer Insights**: Smart transfer recommendations based on form and fixtures
+- **Price Change Predictions**: Track player price changes
+- **Multi-language Support**: English and Arabic localization
+- **Theme Support**: Light and dark mode
 
-   ```bash
-   npm install
-   ```
+## 🛠️ Tech Stack
 
-2. Start the app
+- React Native (Expo SDK 52+)
+- TypeScript
+- Zustand (State Management)
+- i18next (Localization)
+- Axios (API Client)
+- AsyncStorage (Local Storage)
+- React Navigation
 
-   ```bash
-   npx expo start
-   ```
+## 📱 Core Functionalities
 
-In the output, you'll find options to open the app in a
+### API Integration
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Base API URL: `https://fantasy.premierleague.com/api/`
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Global bootstrap data: `/bootstrap-static/`
+- User team data: `/entry/{team_id}/event/{gw}/picks/`
+- Player details: `/element-summary/{player_id}/`
+- Fixtures: `/fixtures/`
+- Live points: `/event/{gw}/live/`
 
-## Get a fresh project
+## 🚀 Getting Started
 
-When you're ready, run:
-
+1. Clone the repository:
 ```bash
-npm run reset-project
+git clone https://github.com/yourusername/sanfpl.git
+cd sanfpl
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. Install dependencies:
+```bash
+npm install
+```
 
-## Learn more
+3. Start the development server:
+```bash
+npm start
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+4. Run on your preferred platform:
+```bash
+npm run ios     # for iOS
+npm run android # for Android
+npm run web     # for web
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## 📱 Screens
 
-## Join the community
+1. **Home Dashboard**
+   - Current Gameweek info
+   - Deadline countdown
+   - Top performing players
+   - Quick action buttons
 
-Join our community of developers creating universal apps.
+2. **My Team**
+   - Team lineup visualization
+   - Player performance stats
+   - Team ID configuration
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+3. **Transfers**
+   - Transfer recommendations
+   - Form-based suggestions
+   - Position filtering
+
+4. **Price Changes**
+   - Price rise/fall predictions
+   - Position-based filtering
+   - Historical price data
+
+5. **Settings**
+   - Theme toggle
+   - Language selection
+   - App preferences
+
+## 🎨 Theming
+
+The app uses a consistent color scheme across light and dark modes:
+
+```typescript
+light: {
+  background: '#FFFFFF',
+  text: '#111827',
+  primary: '#3D619B',
+  accent: '#EF4B4C',
+  card: '#E9E9EB'
+}
+
+dark: {
+  background: '#111827',
+  text: '#FFFFFF',
+  primary: '#3D619B',
+  accent: '#EF4B4C',
+  card: '#1F2937'
+}
+```
+
+## 🌐 Localization
+
+Supported languages:
+- English (en)
+- Arabic (ar)
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+# sanfpl-react-native
