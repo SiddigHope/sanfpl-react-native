@@ -21,7 +21,7 @@ const FUL = require('./fulham-fc-logo.png')
 
 const DEFAULT = require('./arsenal_fc-logo_brandlogos.net_kae1j.png')
 
-const images = {
+const teams = {
     ARS,
     WHU,
     NEW,
@@ -45,4 +45,4 @@ const images = {
     DEFAULT
 }
 
-export default images
+export default teams

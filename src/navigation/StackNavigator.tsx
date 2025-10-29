@@ -1,5 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
+import { FixturesScreen } from '../screens/FixturesScreen';
+import { MatchDetails } from '../screens/MatchDetails';
 import MyTeamScreen from '../screens/MyTeamScreen';
 import { PlayerInfoScreen } from '../screens/PlayerInfoScreen';
 import { TeamRatingScreen } from '../screens/TeamRatingScreen';
@@ -49,6 +51,16 @@ export const StackNavigator = () => {
         options={({ route }) => ({ 
           title: route.params?.selectedPlayer?.web_name || 'Transfer Player'
         })}
+      />
+      <Stack.Screen 
+        name="Fixtures" 
+        component={FixturesScreen} 
+        options={{ title: 'Fixtures' }}
+      />
+      <Stack.Screen 
+        name="MatchDetails" 
+        component={MatchDetails} 
+        options={{ title: 'Match Details' }}
       />
     </Stack.Navigator>
   );

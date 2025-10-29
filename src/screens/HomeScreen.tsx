@@ -9,7 +9,7 @@ import { useFPLStore } from '../stores/fplStore';
 const screens = [
   { id: 1, name: 'My Team', navigate: 'MyTeam' },
   { id: 2, name: 'Team Rating', navigate: 'TeamRating' },
-  { id: 3, name: 'Price Changes', navigate: 'PriceChanges' },
+  { id: 3, name: 'Price Changes', navigate: 'Fixtures' },
   { id: 4, name: 'Stats', navigate: 'Stats' }
 ]
 export default function HomeScreen({ navigation }: any) {
