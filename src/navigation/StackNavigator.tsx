@@ -1,8 +1,9 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import { FixturesScreen } from '../screens/FixturesScreen';
+import { CaptaincyRankingScreen } from '../screens/CaptaincyRankingScreen';
 import { MatchDetails } from '../screens/MatchDetails';
 import MyTeamScreen from '../screens/MyTeamScreen';
+import { PlayerFixtureInfo } from '../screens/PlayerFixtureInfo';
 import { PlayerInfoScreen } from '../screens/PlayerInfoScreen';
 import { TeamRatingScreen } from '../screens/TeamRatingScreen';
 import TransferPlayerSelection from '../screens/TransferPlayerSelection';
@@ -53,14 +54,21 @@ export const StackNavigator = () => {
         })}
       />
       <Stack.Screen 
-        name="Fixtures" 
-        component={FixturesScreen} 
-        options={{ title: 'Fixtures' }}
+        name="Captaincy" 
+        component={CaptaincyRankingScreen} 
+        options={{ title: 'Captaincy' }}
       />
       <Stack.Screen 
         name="MatchDetails" 
         component={MatchDetails} 
         options={{ title: 'Match Details' }}
+      />
+      <Stack.Screen 
+        name="PlayerFixtureInfo" 
+        component={PlayerFixtureInfo} 
+        options={({ route }) => ({ 
+          title: route.params?.player?.web_name || 'Fixture Stats'
+        })}
       />
     </Stack.Navigator>
   );

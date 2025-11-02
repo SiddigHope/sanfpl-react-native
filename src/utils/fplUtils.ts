@@ -51,6 +51,13 @@ export const getGameweekDeadline = (gameweek: any): string => {
   });
 };
 
+export const formatRank = (num:number) => {
+  return new Intl.NumberFormat('en', {
+    notation: 'compact',
+    maximumFractionDigits: 2,
+  }).format(num);
+};
+
 export const getRemainingTime = (deadline: string): string => {
   const now = new Date();
   const deadlineDate = new Date(deadline);

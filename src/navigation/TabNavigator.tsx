@@ -2,9 +2,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
 
-import { CaptaincyRankingScreen } from '../screens/CaptaincyRankingScreen';
 // import { HomeScreen } from '../screens/HomeScreen';
 // import { PredictedPointsScreen } from '../screens/PredictedPointsScreen';
+import { FixturesScreen } from '../screens/FixturesScreen';
 import HomeScreen from '../screens/HomeScreen';
 import { PredictedPointsScreen } from '../screens/PredictedPointsScreen';
 import PriceChangesScreen from '../screens/PriceChangesScreen';
@@ -48,7 +48,7 @@ export const TabNavigator = () => {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Transfers" component={TransfersScreen} />
       <Tab.Screen name="Price Changes" component={PriceChangesScreen} />
-      <Tab.Screen name="Captaincy" component={CaptaincyRankingScreen} />
+      <Tab.Screen name="Fixtures" component={FixturesScreen} />
       <Tab.Screen name="Predictions" component={PredictedPointsScreen} />
     </Tab.Navigator>
   );

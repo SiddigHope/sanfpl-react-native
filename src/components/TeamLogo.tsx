@@ -23,11 +23,13 @@ interface TeamLogoProps {
     width?: number | string,
     height?: number | string,
     calculateColor?: boolean,
+    alt?: boolean,
     setColor?: object | any
 }
 
-const TeamLogo = ({ code = 'DEFAULT', size = 40, width, height, calculateColor = false, setColor }: TeamLogoProps) => {
+const TeamLogo = ({ code = 'DEFAULT', size = 40, width, height, calculateColor = false, setColor, alt }: TeamLogoProps) => {
     const logoUrl = `https://resources.premierleague.com/premierleague25/badges/${code}.png`
+    const logoUrlAlt = `https://resources.premierleague.com/premierleague25/badges-alt/${code}.png`
 
     useEffect(() => {
         const getColors = async () => {
@@ -41,11 +43,11 @@ const TeamLogo = ({ code = 'DEFAULT', size = 40, width, height, calculateColor =
 
                     // Works differently on Android & iOS
                     if (result.platform === "android") {
-                        setColor(result.vibrant);
+                        setColor(result.dominant);
                     } else if (result.platform === "ios") {
                         setColor(result.primary);
                     } else {
-                        setColor(result.vibrant);
+                        setColor(result.dominant);
                     }
                 } catch (error) {
                     console.warn("Color extraction failed", error);
@@ -60,7 +62,7 @@ const TeamLogo = ({ code = 'DEFAULT', size = 40, width, height, calculateColor =
     //   const logoSource = teams[code] || teams.DEFAULT;
     const logoSource = typeof code === 'string' ?
         teams[code] || teams.DEFAULT :
-        { uri: logoUrl }
+        { uri: alt? logoUrlAlt:logoUrl }
 
     // Determine final dimensions
     const logoWidth = width || size;

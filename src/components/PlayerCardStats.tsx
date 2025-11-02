@@ -1,5 +1,6 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useThemeStore } from '../stores/themeStore';
@@ -18,6 +19,7 @@ interface PlayerCardStatsProps {
   photo?:string|object;
   showPhoto?:boolean;
   statusColor?:string|any;
+  disabled?:boolean;
   progress?: number | any;
 }
 
@@ -30,6 +32,7 @@ export const PlayerCardStats: React.FC<PlayerCardStatsProps> = ({
   points,
   form,
   onPress,
+  disabled=false,
   selected = false,
   photo=null,
   showPhoto=false,
@@ -37,9 +40,15 @@ export const PlayerCardStats: React.FC<PlayerCardStatsProps> = ({
   progress
 }) => {
   const theme = useThemeStore((state) => state.theme);
+  const navigation = useNavigation()
+  // console.log(player.code);
+  
+  const handlePress = () => {
+    navigation.navigate('PlayerInfo', {playerId: player.id})
+  }
 
   return (
-    <TouchableOpacity onPress={onPress} disabled={!onPress}>
+    <TouchableOpacity onPress={onPress ?? handlePress} disabled={disabled}>
       <ThemedView
         style={[styles.container, styles.details, {justifyContent: 'center'}]}
       >

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import PlayerImage from '../components/PlayerImage';
 import { useFPLStore } from '../stores/fplStore';
 import { useEnrichedPlayers } from '../utils/fplCalculations';
 
@@ -42,7 +43,8 @@ export const CaptaincyRankingScreen = () => {
       onPress={() => navigation.navigate('PlayerInfo', { playerId: item.id })}
     >
       <ThemedView style={styles.playerCard}>
-        <ThemedText style={styles.rank}>{index + 1}</ThemedText>
+        {/* <ThemedText style={styles.rank}>{index + 1}</ThemedText> */}
+        <PlayerImage image={item.code} height={100} width={70} />
         <View style={styles.playerInfo}>
           <ThemedText style={styles.playerName}>
             {item.web_name} ({item.team_short_name})
@@ -138,7 +140,9 @@ const styles = StyleSheet.create({
   },
   playerCard: {
     flexDirection: 'row',
-    padding: 16,
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 5,
     marginBottom: 12,
     borderRadius: 8,
     elevation: 2,
@@ -156,6 +160,7 @@ const styles = StyleSheet.create({
   },
   playerInfo: {
     flex: 1,
+    marginLeft: 10,
   },
   playerName: {
     fontSize: 18,
@@ -177,7 +182,8 @@ const styles = StyleSheet.create({
   captainScoreContainer: {
     marginTop: 8,
     padding: 8,
-    backgroundColor: '#f0f0f0',
+    // backgroundColor: '#f0f0f0',
+    backgroundColor: '#007AFF',
     borderRadius: 4,
   },
   captainScore: {

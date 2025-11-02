@@ -9,7 +9,7 @@ import { useFPLStore } from '../stores/fplStore';
 
 const TEAM_ID_KEY = '@sanfpl:team_id';
 
-export default function MyTeamScreen() {
+export default function MyTeamScreen({navigation}: any) {
   const { t } = useTranslation();
   const {
     teamId,
@@ -27,6 +27,9 @@ export default function MyTeamScreen() {
   useEffect(() => {
     loadSavedTeamId();
   }, []);
+
+  // console.log({...userTeam,picks:{}});
+  
 
   useEffect(() => {
     if (teamId) {
@@ -53,50 +56,6 @@ export default function MyTeamScreen() {
       setTeamId(inputTeamId);
     }
   };
-
-  // const organizePlayersByPosition = () => {
-  //   if (!userTeam?.picks || !players.length) return {
-  //     goalkeepers: [],
-  //     defenders: [],
-  //     midfielders: [],
-  //     forwards: []
-  //   };
-
-  //   const organized = userTeam.picks.reduce((acc: any, pick: any) => {
-  //     const player = players.find(p => p.id === pick.element);
-  //     if (!player) return acc;
-
-  //     const team = teams.find(t => t.id === player.team);
-  //     const enrichedPlayer = {
-  //       ...player,
-  //       team_short_name: team?.short_name || '',
-  //       position: ['GK', 'DEF', 'MID', 'FWD'][player.element_type - 1]
-  //     };
-
-  //     switch (player.element_type) {
-  //       case 1:
-  //         acc.goalkeepers.push(enrichedPlayer);
-  //         break;
-  //       case 2:
-  //         acc.defenders.push(enrichedPlayer);
-  //         break;
-  //       case 3:
-  //         acc.midfielders.push(enrichedPlayer);
-  //         break;
-  //       case 4:
-  //         acc.forwards.push(enrichedPlayer);
-  //         break;
-  //     }
-  //     return acc;
-  //   }, {
-  //     goalkeepers: [],
-  //     defenders: [],
-  //     midfielders: [],
-  //     forwards: []
-  //   });
-
-  //   return organized;
-  // };
 
 const organizePlayersByPosition = () => {
   if (!userTeam?.picks || !players.length) {
@@ -154,9 +113,7 @@ const organizePlayersByPosition = () => {
   const teamPlayers = organizePlayersByPosition();
 
   const onPlayerPress = (player:any) => {
-    console.log('====================================');
-    console.log(player);
-    console.log('====================================');
+    navigation.navigate('PlayerFixtureInfo',{player,playerId: player.id, fixtureId:currentGameweek })
   }
 
   if (!teamId) {
@@ -198,8 +155,13 @@ const organizePlayersByPosition = () => {
         defenders={teamPlayers.defenders?.picked}
         midfielders={teamPlayers.midfielders?.picked}
         forwards={teamPlayers.forwards?.picked}
-        showBench={true}
         bench={teamPlayers.benched}
+        showBench={true}
+        showTotalPoints={true}
+        showGwRanking={true}
+        totalPoints={userTeam?.entry_history?.points}
+        overallRanking={userTeam?.entry_history?.overall_rank}
+        gwRanking={userTeam?.entry_history?.rank}
         onPlayerPress={onPlayerPress}
       />
     </ScrollView>

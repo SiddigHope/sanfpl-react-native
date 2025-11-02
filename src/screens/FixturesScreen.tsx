@@ -14,10 +14,11 @@ import TeamLogo from "../components/TeamLogo";
 import { useFPLStore } from "../stores/fplStore";
 
 export const FixturesScreen = ({ navigation }: any) => {
-    const { fixtures, teams, currentGameweek, isLoading, players } = useFPLStore();
+    const { fixtures, teams, currentGameweek, isLoading, refreshFixtures } = useFPLStore();
     const [selectedFixture, setSelectedFixture] = useState(null);
     const [visibleModal, setVisibleModal] = useState(false);
     const [weekOffset, setWeekOffset] = useState(0);
+    const [refreshing, setRefreshing] = useState(false)
 
     const activeGameweek = currentGameweek + weekOffset;
     const getTeam = (id) => teams.find((t) => t.id === id);
@@ -41,6 +42,13 @@ export const FixturesScreen = ({ navigation }: any) => {
             ),
         }));
     }, [fixtures, activeGameweek]);
+
+    const refreshData = async () => {
+        setRefreshing(true)
+        await refreshFixtures()
+            .catch(() => setRefreshing(false))
+        setRefreshing(false)
+    }
 
     const handleNext = () => setWeekOffset((p) => p + 1);
     const handlePrev = () => setWeekOffset((p) => (p > -currentGameweek ? p - 1 : p));
@@ -127,6 +135,8 @@ export const FixturesScreen = ({ navigation }: any) => {
                 sections={weekFixtures}
                 keyExtractor={(item) => item.id.toString()}
                 showsVerticalScrollIndicator={false}
+                refreshing={refreshing}
+                onRefresh={refreshData}
                 renderSectionHeader={({ section: { title } }) => (
                     <ThemedText style={styles.sectionHeader}>{title}</ThemedText>
                 )}

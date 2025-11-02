@@ -1,6 +1,8 @@
+import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import React from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { formatRank } from '../utils/fplUtils';
 import { PlayerCard } from './PlayerCard';
 
 interface Player {
@@ -14,7 +16,7 @@ interface Player {
   opta_code: string;
   isBenchGoalkeeper: boolean,
   isBenched: boolean,
-  event_points:number
+  event_points: number
 }
 
 interface TeamPitchProps {
@@ -26,6 +28,11 @@ interface TeamPitchProps {
   selectedPlayer?: number;
   showBench?: boolean;
   bench: Player[];
+  showTotalPoints?: boolean;
+  showGwRanking?: boolean;
+  totalPoints?: number;
+  gwRanking?: number;
+  overallRanking?: number;
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -41,7 +48,12 @@ export const TeamPitch: React.FC<TeamPitchProps> = ({
   onPlayerPress,
   selectedPlayer,
   showBench = false,
-  bench
+  bench,
+  showTotalPoints = false,
+  showGwRanking = false,
+  totalPoints,
+  gwRanking,
+  overallRanking,
 }) => {
   const renderPlayers = (players: Player[], rowPosition: number) => {
     const spacing = PITCH_WIDTH / (players.length + 1);
@@ -54,7 +66,9 @@ export const TeamPitch: React.FC<TeamPitchProps> = ({
           justifyContent: 'center'
           // left: spacing * (index + 1) - 40,
           // top: (PITCH_HEIGHT * rowPosition) - 40,
-        }]}
+        },
+        rowPosition === 0.8 && {marginBottom: 30}
+      ]}
       >
         {players?.map((player, index) => (
           <PlayerCard
@@ -88,6 +102,25 @@ export const TeamPitch: React.FC<TeamPitchProps> = ({
         <View style={styles.penaltyBoxTop} />
         <View style={styles.penaltyBoxBottom} />
 
+        {showGwRanking || showTotalPoints ? (
+          <View style={styles.topCardsContainer}>
+            {showTotalPoints && (
+              <ThemedView style={styles.pointsContainer}>
+                <ThemedText style={[styles.points, { fontWeight: '600' }]}>{totalPoints}</ThemedText>
+                <Text style={[styles.points, { color: 'grey' }]}>{"Points"}</Text>
+              </ThemedView>
+            )}
+            {showGwRanking && (
+              <ThemedView style={styles.pointsContainer}>
+                <ThemedText style={[styles.points, { fontWeight: '600' }]}>{formatRank(gwRanking || 0)}</ThemedText>
+                <Text style={[styles.points, { color: 'grey' }]}>{"GW-Rank"}</Text>
+                <ThemedText style={[styles.points, { fontWeight: '600' }]}>{formatRank(overallRanking || 0)}</ThemedText>
+                <Text style={[styles.points, { color: 'grey' }]}>{"Overall"}</Text>
+              </ThemedView>
+            )}
+          </View>
+        ) : null}
+
         {/* Players */}
         <View style={{ position: 'absolute', width: '100%' }}>
           {renderPlayers(goalkeepers, 0.8)}
@@ -109,7 +142,7 @@ export const TeamPitch: React.FC<TeamPitchProps> = ({
           </View>} */}
         </View>
       </View>
-        {showBench && renderPlayers(bench, 0.2)}
+      {showBench && renderPlayers(bench, 0.2)}
     </ThemedView>
   );
 };
@@ -163,4 +196,23 @@ const styles = StyleSheet.create({
     left: '50%',
     transform: [{ translateX: -PITCH_WIDTH * 0.3 }],
   },
+  topCardsContainer: {
+    position: 'absolute',
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
+    width: '100%',
+    top: 20,
+    paddingHorizontal: 20,
+  },
+  pointsContainer: {
+    alignItems: 'center',
+    width: 90,
+    height: 100,
+    justifyContent: 'center',
+    borderRadius: 10,
+    paddingVertical: 10
+  },
+  points: {
+    fontSize: 14,
+  }
 });

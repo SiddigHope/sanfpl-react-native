@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { PlayerCard } from '../components/PlayerCard';
+import { PlayerCardStats } from '../components/PlayerCardStats';
 import { useFPLStore } from '../stores/fplStore';
 
 type Position = 'ALL' | 'GK' | 'DEF' | 'MID' | 'FWD';
@@ -208,10 +209,10 @@ export default function TransfersScreen() {
           </ThemedText>
           <ThemedText style={styles.sectionTitle}>{t('Popular Transfers (Global)')}</ThemedText>
           {getGlobalRecommendations().map(p => (
-            <PlayerCard
+            <PlayerCardStats
               key={p.id}
               name={p.web_name}
-              player_image={true}
+              showPhoto={true}
               player={p}
               opta_code={p.opta_code}
               team={p.team_short_name}

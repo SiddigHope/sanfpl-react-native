@@ -1,17 +1,23 @@
-import images from "@/assets/images";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { ImageBackground } from "expo-image";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import TeamLogo from "../components/TeamLogo";
 import { useFPLStore } from "../stores/fplStore";
 
 export const MatchDetails = ({ route }) => {
   const { fixtureId } = route.params;
-  const { fixtures, teams, players } = useFPLStore();
+  const { fixtures, teams, players, refreshFixtures } = useFPLStore();
   const [homeBackgroundColor, setHomeBackgroundColor] = useState('')
   const [awayBackgroundColor, setAwayBackgroundColor] = useState('')
+  const [refreshing, setRefreshing] = useState(false)
+
+  const refreshData = async () => {
+    setRefreshing(true)
+    await refreshFixtures()
+      .catch(() => setRefreshing(false))
+    setRefreshing(false)
+  }
 
   const fixture = fixtures.find((f) => f.id === fixtureId);
 
@@ -32,13 +38,14 @@ export const MatchDetails = ({ route }) => {
   };
 
   const goals = getStat("goals_scored");
+  const ownGoals = getStat("own_goals");
   const assists = getStat("assists");
   const yellow = getStat("yellow_cards");
   const red = getStat("red_cards");
   const saves = getStat("saves");
   const bonus = getStat("bonus");
   const bps = getStat("bps"); // bonus points system
-  const defensive = getStat("influence"); // approximation for defensive contributions
+  const defensive = getStat("defensive_contribution"); // approximation for defensive contributions
 
   const kickoff = fixture
     ? new Date(fixture.kickoff_time).toLocaleString()
@@ -47,23 +54,24 @@ export const MatchDetails = ({ route }) => {
   const renderStatRow = (label, left, right) => {
     if (!left.length && !right.length) return null;
     return (
-      <View style={styles.statRow}>
-        <View style={styles.side}>
-          {left.map((p, i) => (
-            <ThemedText key={i} style={styles.playerText}>
-              {p.web_name} {p.value > 1 ? `(${p.value})` : ""}
-            </ThemedText>
-          ))}
-        </View>
-
+      <View style={{ alignItems: 'center' }}>
         <ThemedText style={styles.statLabel}>{label}</ThemedText>
+        <View style={styles.statRow}>
+          <View style={styles.side}>
+            {left.map((p, i) => (
+              <ThemedText key={i} style={styles.playerText}>
+                {p.web_name} {p.value > 1 ? `(${p.value})` : ""}
+              </ThemedText>
+            ))}
+          </View>
 
-        <View style={[styles.side, styles.rightSide]}>
-          {right.map((p, i) => (
-            <ThemedText key={i} style={[styles.playerText, styles.alignRight]}>
-              {p.web_name} {p.value > 1 ? `(${p.value})` : ""}
-            </ThemedText>
-          ))}
+          <View style={[styles.side, styles.rightSide]}>
+            {right.map((p, i) => (
+              <ThemedText key={i} style={[styles.playerText, styles.alignRight]}>
+                {p.web_name} {p.value > 1 ? `(${p.value})` : ""}
+              </ThemedText>
+            ))}
+          </View>
         </View>
       </View>
     );
@@ -82,40 +90,43 @@ export const MatchDetails = ({ route }) => {
   return (
     <ThemedView style={styles.container}>
       {/* Header */}
-      <ImageBackground
+      {/* <ImageBackground
         source={images.pitch}
         style={{ height: 150, justifyContent: 'center' }}
       // blurRadius={2}
       >
-        <ThemedView style={{ width: '100%', height: '100%', position: 'absolute', opacity: 0.7 }} />
-        <View style={styles.header}>
-          <View style={[styles.teamBox, homeBackgroundColor && {backgroundColor: homeBackgroundColor}]}>
-            {/* <Image source={{ uri: homeTeam?.logo }} style={styles.logo} /> */}
-            <TeamLogo
-              code={homeTeam?.code}
-              calculateColor={true}
-              setColor={setHomeBackgroundColor}
-            />
-            <ThemedText style={styles.teamShort}>{homeTeam?.short_name}</ThemedText>
-          </View>
-
-          <View style={styles.scoreBox}>
-            <ThemedText style={styles.scoreText}>
-              {fixture.team_h_score ?? "-"} - {fixture.team_a_score ?? "-"}
-            </ThemedText>
-          </View>
-
-          <View style={[styles.teamBox, awayBackgroundColor && {backgroundColor: awayBackgroundColor}]}>
-            <ThemedText style={styles.teamShort}>{awayTeam?.short_name}</ThemedText>
-            {/* <Image source={{ uri: awayTeam?.logo }} style={styles.logo} /> */}
-            <TeamLogo
-              code={awayTeam?.code}
-              calculateColor={true}
-              setColor={setAwayBackgroundColor}
-            />
-          </View>
+        <ThemedView style={{ width: '100%', height: '100%', position: 'absolute', opacity: 0.7 }} /> */}
+      <View style={styles.header}>
+        <View style={[styles.teamBox, homeBackgroundColor && { backgroundColor: homeBackgroundColor }]}>
+          {/* <Image source={{ uri: homeTeam?.logo }} style={styles.logo} /> */}
+          <TeamLogo
+            code={homeTeam?.code}
+            calculateColor={true}
+            setColor={setHomeBackgroundColor}
+            alt={true}
+          />
+          <ThemedText style={styles.teamShort}>{homeTeam?.short_name}</ThemedText>
         </View>
-      </ImageBackground>
+
+
+        <View style={styles.scoreBox}>
+          <ThemedText style={styles.scoreText}>
+            {fixture.team_h_score ?? "-"} - {fixture.team_a_score ?? "-"}
+          </ThemedText>
+        </View>
+
+        <View style={[styles.teamBox, awayBackgroundColor && { backgroundColor: awayBackgroundColor }]}>
+          <ThemedText style={styles.teamShort}>{awayTeam?.short_name}</ThemedText>
+          {/* <Image source={{ uri: awayTeam?.logo }} style={styles.logo} /> */}
+          <TeamLogo
+            code={awayTeam?.code}
+            calculateColor={true}
+            setColor={setAwayBackgroundColor}
+            alt={true}
+          />
+        </View>
+      </View>
+      {/* </ImageBackground> */}
 
 
       <ThemedText style={styles.gwText}>Gameweek {fixture.event}</ThemedText>
@@ -128,9 +139,17 @@ export const MatchDetails = ({ route }) => {
           <ThemedText style={styles.kickoffText}>{kickoff}</ThemedText>
         </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.scroll}>
+        <ScrollView 
+         contentContainerStyle={styles.scroll}
+         refreshControl={
+         <RefreshControl
+          refreshing={refreshing}
+          onRefresh={refreshData}
+         />}
+         >
           {renderStatRow("Goals", goals.home, goals.away)}
           {renderStatRow("Assists", assists.home, assists.away)}
+          {renderStatRow("Own Goals", ownGoals.home, ownGoals.away)}
           {renderStatRow("Yellow Cards", yellow.home, yellow.away)}
           {renderStatRow("Red Cards", red.home, red.away)}
           {renderStatRow("Saves", saves.home, saves.away)}
@@ -154,16 +173,29 @@ const styles = StyleSheet.create({
   teamBox: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: 'center',
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderRadius: 8,
+    flex: 1,
+    overflow: 'hidden'
   },
-  scoreBox: { paddingHorizontal: 15 },
+  scoreBox: {
+    position: 'absolute',
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: "#FFF",
+    zIndex: 1,
+  },
   scoreText: { fontSize: 28, fontWeight: "bold", color: "#000" },
-  teamShort: { fontSize: 16, fontWeight: "bold", color: "#000", marginHorizontal: 6 },
+  teamShort: { fontSize: 16, fontWeight: "bold", color: "#FFF", marginHorizontal: 6 },
   logo: { width: 40, height: 40, resizeMode: "contain" },
   gwText: { textAlign: "center", color: "#666", marginVertical: 8 },
-  scroll: { paddingBottom: 50 },
+  scroll: {
+    paddingBottom: 50,
+    paddingHorizontal: 20,
+  },
 
   statRow: {
     flexDirection: "row",
@@ -173,10 +205,12 @@ const styles = StyleSheet.create({
   statLabel: {
     fontWeight: "600",
     color: "#444",
-    width: 100,
+    // width: 100,
     textAlign: "center",
+    backgroundColor: '#f5f2f5',
+    width: '100%',
   },
-  side: { flex: 1 },
+  side: { flex: 1, paddingHorizontal: 20 },
   rightSide: { alignItems: "flex-end" },
   playerText: { fontSize: 13, color: "#222", marginVertical: 2 },
   alignRight: { textAlign: "right" },

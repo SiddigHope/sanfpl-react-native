@@ -4,11 +4,11 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useMemo } from 'react';
 import {
   ActivityIndicator,
-  Image,
   ScrollView,
   StyleSheet,
-  View,
+  View
 } from 'react-native';
+import PlayerImage from '../components/PlayerImage';
 import { useFPLStore } from '../stores/fplStore';
 import { useEnrichedPlayers } from '../utils/fplCalculations';
 
@@ -59,6 +59,19 @@ export const PlayerInfoScreen = () => {
       });
   }, [fixtures, playerInfo, teams, currentGameweek]);
 
+  // 🧮 Approximate xG, xGA, xGI based on ICT values
+  const derivedStats = useMemo(() => {
+    if (!playerInfo) return { xg: 0, xga: 0, xgi: 0 };
+    const xg = Number(playerInfo.threat) / 200;
+    const xga = Number(playerInfo.creativity) / 200;
+    const xgi = xg + xga;
+    return {
+      xg: xg.toFixed(2),
+      xga: xga.toFixed(2),
+      xgi: xgi.toFixed(2),
+    };
+  }, [playerInfo]);
+
   const renderStatItem = (label: string, value: string | number) => (
     <View style={styles.statItem}>
       <ThemedText style={styles.statLabel}>{label}</ThemedText>
@@ -104,11 +117,7 @@ export const PlayerInfoScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <ThemedView style={styles.header}>
-        <Image
-          source={{ uri: `https://resources.premierleague.com/premierleague/photos/players/110x140/p${playerInfo.id}.png` }}
-          style={styles.playerImage}
-          // defaultSource={require('../assets/player-placeholder.png')}
-        />
+        <PlayerImage {...styles.playerImage} image={playerInfo?.code} />
         <View style={styles.headerInfo}>
           <ThemedText style={styles.playerName}>{playerInfo.web_name}</ThemedText>
           <ThemedText style={styles.teamName}>{team?.name}</ThemedText>
@@ -151,6 +160,9 @@ export const PlayerInfoScreen = () => {
         <ThemedText style={styles.sectionTitle}>Advanced Stats</ThemedText>
         <View style={styles.statsGrid}>
           {renderStatItem('ICT Index', playerInfo.ict_index)}
+          {renderStatItem('xG (est)', derivedStats.xg)}
+          {renderStatItem('xGA (est)', derivedStats.xga)}
+          {renderStatItem('xGI (est)', derivedStats.xgi)}
           {renderStatItem('Influence', playerInfo.influence)}
           {renderStatItem('Creativity', playerInfo.creativity)}
           {renderStatItem('Threat', playerInfo.threat)}
@@ -166,6 +178,7 @@ export const PlayerInfoScreen = () => {
     </ScrollView>
   );
 };
+
 
 const getDifficultyColor = (difficulty: number): string => {
   switch (difficulty) {
@@ -200,6 +213,7 @@ const styles = StyleSheet.create({
   },
   headerInfo: {
     flex: 1,
+    marginLeft: 16,
   },
   playerName: {
     fontSize: 24,

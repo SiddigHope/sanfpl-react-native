@@ -38,7 +38,8 @@ interface FPLState {
   fetchUserTeam: (gameweek: number) => Promise<void>;
   userTeam: any | null;
   fixtures: any|null,
-  bank: any|null
+  bank: any|null,
+  refreshFixtures:()=>Promise<void>
 }
 
 export const useFPLStore = create<FPLState>((set, get) => ({
@@ -69,6 +70,16 @@ export const useFPLStore = create<FPLState>((set, get) => ({
       });
     } catch (error) {
       set({ error: 'Failed to fetch global data', isLoading: false });
+    }
+  },
+
+  refreshFixtures: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const fixturesData = await fetchFixtures()
+    set({fixtures: fixturesData})
+    } catch (error) {
+      set({ error: 'Failed to fetch global data' });
     }
   },
 
