@@ -3,7 +3,7 @@ import { ThemedView } from '@/components/themed-view';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
-import { PlayerCardStats } from '../components/PlayerCardStats';
+import { PlayerRowStats } from '../components/PlayerRowStats';
 import { APP_CONFIG } from '../config/constants';
 import { useFPLStore } from '../stores/fplStore';
 import { normalize } from '../utils/normalizePlayerName';
@@ -21,17 +21,19 @@ interface EnrichedPlayer {
   predicted_status: PredictedStatus;
   progress: number;
   code: number;
-  total_points: number|any;
-  form: number| any;
+  total_points: number | any;
+  form: number | any;
+  creativity: number | any;
+  threat: number | any;
 }
 
 
-const tabs: (PredictedStatus | 'all')[] = [
+export const tabs: (PredictedStatus | 'all')[] = [
   'all',
   'rise_soon',
   'drop_soon',
-  'rising',
-  'dropping',
+  // 'rising',
+  // 'dropping',
   'already_raised',
   'already_dropped',
 ];
@@ -62,7 +64,6 @@ export default function PriceChangesScreen() {
         // build safe photo URL (player.photo is like "12345.jpg" or "p12345.jpg")
         const rawPhoto = String(player.code ?? '');
         const num = rawPhoto.replace(/^p/, '').replace('.jpg', '').padStart(6, '0'); // pad
-        const photoUrl = `https://resources.premierleague.com/premierleague/photos/players/110x140/p${num}.png`;
 
         const { status, progress } = calculatePredictedStatus(player);
 
@@ -72,10 +73,12 @@ export default function PriceChangesScreen() {
           team_short_name: team?.short_name || '',
           position: ['GK', 'DEF', 'MID', 'FWD'][player.element_type - 1],
           now_cost: Number(player.now_cost ?? 0),
-          photo: photoUrl,
+          photo: '',
           predicted_status: status,
           progress,
           code: player.code ?? 0,
+          creativity: player.creativity,
+          threat: player.threat,
           total_points: player.total_points,
           form: player.form,
           // carry-through other useful fields for UI if needed:
@@ -109,8 +112,8 @@ export default function PriceChangesScreen() {
       rising: 1,
       drop_soon: 2,
       dropping: 3,
-      already_raised:4,
-      already_dropped:5,
+      already_raised: 4,
+      already_dropped: 5,
       stable: 6
     };
 
@@ -181,7 +184,7 @@ export default function PriceChangesScreen() {
       return { status: 'stable', progress: 0 };
     }
 
-      // Detect already changed
+    // Detect already changed
     const costDiff = player.cost_change_event ?? 0; // +1 or -1 if changed
     if (costDiff > 0) return { status: 'already_raised', progress: 1 };
     if (costDiff < 0) return { status: 'already_dropped', progress: 1 };
@@ -247,19 +250,19 @@ export default function PriceChangesScreen() {
   //     });
   // };
 
-  
-const getStatusColor = (status: PredictedStatus): string => {
-  switch (status) {
-    case 'rise_soon': return '#22c55e';
-    case 'drop_soon': return '#ef4444';
-    case 'rising': return '#86efac';
-    case 'dropping': return '#fca5a5';
-    case 'already_raised': return '#16a34a';
-    case 'already_dropped': return '#dc2626';
-    case 'stable': return '#a1a1aa';
-    default: return '#3b82f6';
-  }
-};
+
+  const getStatusColor = (status: PredictedStatus): string => {
+    switch (status) {
+      case 'rise_soon': return '#22c55e';
+      case 'drop_soon': return '#ef4444';
+      case 'rising': return '#86efac';
+      case 'dropping': return '#fca5a5';
+      case 'already_raised': return '#16a34a';
+      case 'already_dropped': return '#dc2626';
+      case 'stable': return '#a1a1aa';
+      default: return '#3b82f6';
+    }
+  };
 
   const positions: Position[] = ['ALL', 'GK', 'DEF', 'MID', 'FWD'];
 
@@ -267,8 +270,8 @@ const getStatusColor = (status: PredictedStatus): string => {
     // const filteredPlayers = players.filter(p => p.predicted_status === status);
     const filteredPlayers = activeTab === 'all'
       ? players.filter(p =>
-          p.predicted_status === 'rise_soon' || p.predicted_status === 'drop_soon'
-        ).slice(0, 10)
+        p.predicted_status === 'rise_soon' || p.predicted_status === 'drop_soon'
+      ).slice(0, 10)
       : players.filter(p => p.predicted_status === activeTab);
 
     if (filteredPlayers.length === 0) return null;
@@ -290,28 +293,30 @@ const getStatusColor = (status: PredictedStatus): string => {
       <View style={styles.statusGroup}>
         {/* <ThemedText style={styles.groupTitle}>{getStatusTitle()}</ThemedText> */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row mb-3">
-        {tabs.map(tab => (
-          <TouchableOpacity
-            key={tab}
-            onPress={() => setActiveTab(tab)}
-            style={[
-              styles.filterButton,
-              tab === activeTab && styles.filterButtonActive
-            ]}
-            >
-            <ThemedText
-             style={[
-                styles.filterText,
-                tab === activeTab && styles.filterTextActive
+          {tabs.map(tab => (
+            <TouchableOpacity
+              key={tab}
+              onPress={() => setActiveTab(tab)}
+              style={[
+                styles.filterButton,
+                tab === activeTab && styles.filterButtonActive
               ]}
-             >
-              {tab === 'all' ? 'All' : getStatusTitle(tab)}
-            </ThemedText>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+            >
+              <ThemedText
+                style={[
+                  styles.filterText,
+                  tab === activeTab && styles.filterTextActive
+                ]}
+              >
+                {tab === 'all' ? 'All' : getStatusTitle(tab)}
+              </ThemedText>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
         {filteredPlayers.map(player => (
-          <PlayerCardStats
+          <>
+          <PlayerRowStats
+            height={80}
             key={player.id}
             name={player.web_name}
             player={player}
@@ -321,87 +326,69 @@ const getStatusColor = (status: PredictedStatus): string => {
             position={player.position}
             price={player.now_cost}
             showPhoto={true}
+            status={player.predicted_status}
             statusColor={getStatusColor(player.predicted_status)}
             progress={player.progress}
           />
+          <View style={{height: 1, width: '100%', backgroundColor: '#e3e3e3'}} />
+          </>
         ))}
       </View>
     );
   };
 
   return (
-    <ScrollView
+    <ThemedView
       style={styles.container}
-      refreshControl={
-        <RefreshControl
-          refreshing={isLoading}
-          onRefresh={fetchGlobalData}
-        />
-      }
-      stickyHeaderIndices={[0]}
     >
-      <ThemedView style={styles.header}>
-        <View style={{margin: 16}}>
-          <ThemedText style={styles.title}>Price Change Predictions</ThemedText>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search player or team..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholderTextColor="#666"
-        />
-        </View>
-      </ThemedView>
+      <ScrollView
+        style={styles.container}
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={fetchGlobalData}
+          />
+        }
+      stickyHeaderIndices={[0]}
+      >
+        <ThemedView style={styles.header}>
+          <View style={{ margin: 16, marginBottom: 0 }}>
+            {/* <ThemedText style={styles.title}>Price Change Predictions</ThemedText> */}
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search player or team..."
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholderTextColor="#666"
+            />
+          </View>
+        </ThemedView>
 
-      <View style={styles.filterContainer}>
-        {positions.map((position) => (
-          <TouchableOpacity
-            key={position}
-            onPress={() => setSelectedPosition(position)}
-            style={[
-              styles.filterButton,
-              position === selectedPosition && styles.filterButtonActive
-            ]}
-          >
-            <ThemedText
-              style={[
-                styles.filterText,
-                position === selectedPosition && styles.filterTextActive
-              ]}
-            >
-              {position}
+        {isLoading || computing ? (
+          <View style={{ padding: 24, alignItems: 'center' }}>
+            <ActivityIndicator size="large" color={APP_CONFIG.THEME.LIGHT.primary} />
+            <ThemedText style={{ marginTop: 12 }}>
+              {isLoading ? t('loading_data') : t('calculating_predictions')}
             </ThemedText>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {isLoading || computing ? (
-        <View style={{ padding: 24, alignItems: 'center' }}>
-          <ActivityIndicator size="large" color={APP_CONFIG.THEME.LIGHT.primary} />
-          <ThemedText style={{ marginTop: 12 }}>
-            {isLoading ? t('loading_data') : t('calculating_predictions')}
-          </ThemedText>
-        </View>
-      ) : (
-      <View style={styles.content}>
-        {/* {['rise_soon', 'drop_soon', 'rising', 'dropping', 'stable'].map((status) =>
-          renderStatusGroup(status as PredictedStatus, filteredAndSortedPlayers)
-        )} */}
-          {renderStatusGroup(filteredAndSortedPlayers)}
-       
-      </View>
-    )}
-    </ScrollView>
+          </View>
+        ) : (
+          <View style={styles.content}>
+            {renderStatusGroup(filteredAndSortedPlayers)}
+          </View>
+        )}
+      </ScrollView>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // backgroundColor: '#FFF'
   },
   header: {
     // padding: 16,
-    marginBottom: 8,
+    // marginBottom: 8,
   },
   title: {
     fontSize: 24,
@@ -413,7 +400,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3F4F6',
     borderRadius: 8,
     paddingHorizontal: 12,
-    marginBottom: 8,
+    // marginBottom: 8,
   },
   filterContainer: {
     flexDirection: 'row',
@@ -422,10 +409,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   filterButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    backgroundColor: '#E9E9EB',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    marginHorizontal: 4,
+    borderRadius: 6,
+    // backgroundColor: '#E9E9EB',
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    borderWidth: 0.5,
+    borderColor: '#888',
   },
   filterButtonActive: {
     backgroundColor: APP_CONFIG.THEME.LIGHT.primary,

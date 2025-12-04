@@ -6,22 +6,21 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  FlatList,
   Modal,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
 import EnterTeamIdTextInput from '../components/EnterTeamIdTextInput';
 import { PlayerCard } from '../components/PlayerCard';
-import { PlayerTransferCard } from '../components/PlayerTransferCard';
 import { useFPLStore } from '../stores/fplStore';
 import { calculateTeamRating, optimizeTeam, useEnrichedPlayers } from '../utils/fplCalculations';
+import useNav from '../utils/navigationHelper';
 
 export const TeamRatingScreen = () => {
   const navigation = useNavigation();
+  const {navigate} = useNav()
 
   const {
     players,
@@ -196,7 +195,7 @@ export const TeamRatingScreen = () => {
     setShowModal(false);
     // setShowTransferModal(true);
     setSelectedPlayer(tempPlayer);
-    navigation.navigate('TransferPlayerSelection', { selectedPlayer: tempPlayer, currentTeam, inBank, makeTransfer })
+    navigate('TransferPlayerSelection', { selectedPlayer: tempPlayer, currentTeam, inBank, makeTransfer })
   };
 
   const makeTransfer = (inPlayer: any) => {
@@ -277,7 +276,7 @@ export const TeamRatingScreen = () => {
       form={player.form}
       opponent_short_name={player.opponent_short_name}
       onPress={() => handlePlayerPress(player)}
-      selected={selectedPlayer === player.id}
+      selected={selectedPlayer?.id === player.id}
       isCaptain={player.is_captain}
       isViceCaptain={player.is_vice_captain}
     />
@@ -296,7 +295,7 @@ export const TeamRatingScreen = () => {
             style={styles.modalOption}
             onPress={() => {
               setShowModal(false);
-              navigation.navigate('PlayerInfo', { playerId: selectedPlayer?.id });
+              navigate('PlayerInfo', { playerId: selectedPlayer?.id });
             }}
           >
             <ThemedText style={styles.modalOptionText}>Player Info</ThemedText>
@@ -340,63 +339,6 @@ export const TeamRatingScreen = () => {
       </View>
     </Modal>
   );
-
-  const renderTransferModal = () => {
-    const availablePlayers = players
-      .filter(p => {
-        const isInTeam = [...starting, ...bench].some(tp => tp.id === p.id);
-        const matchesPosition = p.element_type === selectedPlayer?.element_type;
-        const matchesSearch = p.web_name.toLowerCase().includes(searchQuery.toLowerCase());
-        return !isInTeam && matchesPosition && matchesSearch;
-      })
-    // .sort((a, b) => b.total_points - a.total_points);
-
-    return (
-      <Modal
-        visible={showTransferModal}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowTransferModal(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search players..."
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-            <FlatList
-              data={availablePlayers}
-              keyExtractor={item => item.id.toString()}
-              renderItem={({ item }) => (
-                <PlayerTransferCard
-                  key={item.id}
-                  name={item.web_name}
-                  player={item}
-                  form={item.form}
-                  points={item.total_points}
-                  team={item.team_short_name}
-                  position={item.element_type}
-                  price={item.now_cost}
-                  showPhoto={true}
-                />
-              )}
-            />
-            <TouchableOpacity
-              style={[styles.modalOption, styles.modalOptionCancel]}
-              onPress={() => {
-                setShowTransferModal(false);
-                setSearchQuery('');
-              }}
-            >
-              <ThemedText style={styles.modalOptionText}>Cancel</ThemedText>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    );
-  };
 
   if (isLoading) {
     return (
@@ -614,13 +556,13 @@ const styles = StyleSheet.create({
   startingGrid: {
     flex: 1,
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    // flexWrap: 'wrap',
     justifyContent: 'center',
-    alignContent: 'space-around',
+    // alignContent: 'space-around',
   },
   gridItem: {
-    width: '25%',
-    aspectRatio: 1,
+    // width: '25%',
+    // aspectRatio: 1,
     marginBottom: 8,
   },
   playerContainer: {

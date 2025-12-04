@@ -11,7 +11,7 @@ import { useFPLStore } from '../stores/fplStore';
 
 const TEAM_ID_KEY = '@sanfpl:team_id';
 
-export default function EnterTeamIdTextInput({ }) {
+export default function EnterTeamIdTextInput() {
     const { t } = useTranslation()
     const {
         teamId,

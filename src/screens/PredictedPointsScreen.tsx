@@ -13,12 +13,15 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useFPLStore } from '../stores/fplStore';
 import { useEnrichedPlayers } from '../utils/fplCalculations';
+import useNav from '../utils/navigationHelper';
 
 const INITIAL_DISPLAY_COUNT = 10;
 const POSITIONS = ['All', 'GK', 'DEF', 'MID', 'FWD'];
 
 export const PredictedPointsScreen = () => {
   const navigation = useNavigation();
+
+  const {navigate} = useNav()
   const [selectedPosition, setSelectedPosition] = useState('All');
   const [showAll, setShowAll] = useState(false);
 
@@ -74,7 +77,7 @@ export const PredictedPointsScreen = () => {
 
   const renderPlayerItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate('PlayerInfo', { playerId: item.id })}
+      onPress={() => navigate('PlayerInfo', { playerId: item.id })}
     >
       <ThemedView style={styles.playerCard}>
         <View style={styles.playerHeader}>

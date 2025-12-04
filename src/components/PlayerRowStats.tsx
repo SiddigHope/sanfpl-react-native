@@ -1,13 +1,13 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useThemeStore } from '../stores/themeStore';
 import useNav from '../utils/navigationHelper';
 import PlayerImage from './PlayerImage';
 
-interface PlayerCardStatsProps {
+interface PlayerRowStatsProps {
   name: string;
   team: string;
   position: string;
@@ -23,9 +23,10 @@ interface PlayerCardStatsProps {
   disabled?: boolean;
   progress?: number | any;
   height?: number | any;
+  status?: string | any;
 }
 
-export const PlayerCardStats: React.FC<PlayerCardStatsProps> = ({
+export const PlayerRowStats: React.FC<PlayerRowStatsProps> = ({
   player,
   name,
   team,
@@ -41,35 +42,50 @@ export const PlayerCardStats: React.FC<PlayerCardStatsProps> = ({
   statusColor,
   progress,
   height,
+  status
 }) => {
   const theme = useThemeStore((state) => state.theme);
-  const navigation = useNavigation()
   const { navigate } = useNav()
-  // console.log(player.code);
+  const [statusIcon, setStatusIcon] = useState({ name: 'arrow-up-circle', color: 'grey' });
+  console.log(String(status).includes('rise'));
+
+  useEffect(() => {
+    if (String(status).includes('drop')) {
+      setStatusIcon({ name: 'arrow-down-circle', color: 'red' });
+    } else {
+      setStatusIcon({ name: 'arrow-up-circle', color: 'green' });
+    }
+  }, [status]);
 
   const handlePress = () => {
     navigate('PlayerInfo', { playerId: player.id })
   }
 
+  const derivedStats = useMemo(() => {
+    if (!player) return { xg: 0, xga: 0, xgi: 0 };
+    const xg = Number(player.threat) / 200;
+    const xga = Number(player.creativity) / 200;
+    const xgi = xg + xga;
+    return {
+      xg: xg.toFixed(2),
+      xga: xga.toFixed(2),
+      xgi: xgi.toFixed(2),
+    };
+  }, [player]);
+
   return (
     <TouchableOpacity onPress={onPress ?? handlePress} disabled={disabled}>
       <ThemedView
-        style={[styles.container, styles.details, { justifyContent: 'center' }, statusColor && {...styles.overlay, borderColor: statusColor}, height && {height: height, overflow: 'hidden'}  ]}
-        >
-      {/* {statusColor && <View style={[styles.overlay, {backgroundColor: statusColor}]}/>} */}
-        {showPhoto && <PlayerImage width={50} height={80} image={player?.code} />}
+        style={[styles.container, styles.details, { justifyContent: 'center' }]}
+      >
+        {showPhoto && <PlayerImage width={50} height={50} image={player?.code} />}
         <ThemedView
           style={[selected && styles.selected, showPhoto && { flex: 1, marginHorizontal: 10 }]}
         >
-          <View style={styles.header}>
-            <ThemedText style={styles.name}>{name}</ThemedText>
-            <ThemedText style={styles.team}>{team}</ThemedText>
-          </View>
-
           <View style={styles.details}>
-            <View style={styles.detailItem}>
-              <ThemedText style={styles.label}>POS</ThemedText>
-              <ThemedText style={styles.value}>{position}</ThemedText>
+            <View>
+              <ThemedText style={styles.name}>{name}</ThemedText>
+              <ThemedText style={styles.team}>{`${team} (${position})`}</ThemedText>
             </View>
 
             <View style={styles.detailItem}>
@@ -78,13 +94,27 @@ export const PlayerCardStats: React.FC<PlayerCardStatsProps> = ({
             </View>
 
             <View style={styles.detailItem}>
+              <ThemedText style={styles.label}>xG</ThemedText>
+              <ThemedText style={styles.value}>{derivedStats.xg}</ThemedText>
+            </View>
+
+            <View style={styles.detailItem}>
+              <ThemedText style={styles.label}>xGA</ThemedText>
+              <ThemedText style={styles.value}>{derivedStats.xga}</ThemedText>
+            </View>
+
+            {/* <View style={styles.detailItem}>
               <ThemedText style={styles.label}>PTS</ThemedText>
               <ThemedText style={styles.value}>{points}</ThemedText>
-            </View>
+            </View> */}
 
             <View style={styles.detailItem}>
               <ThemedText style={styles.label}>FORM</ThemedText>
               <ThemedText style={styles.value}>{form}</ThemedText>
+            </View>
+
+            <View style={styles.detailItem}>
+              <Ionicons name={statusIcon.name} size={20} color={statusIcon.color} />
             </View>
           </View>
         </ThemedView>
@@ -97,17 +127,9 @@ export const PlayerCardStats: React.FC<PlayerCardStatsProps> = ({
 const styles = StyleSheet.create({
   container: {
     borderRadius: 12,
-    padding: 12,
+    paddingVertical: 5,
     marginVertical: 6,
-    marginHorizontal: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
+    // marginHorizontal: 16,
   },
   selected: {
     borderWidth: 2,
@@ -120,11 +142,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   name: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   team: {
-    fontSize: 14,
+    fontSize: 12,
     opacity: 0.8,
   },
   details: {
@@ -141,7 +163,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   value: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '500',
   },
   overlay: {

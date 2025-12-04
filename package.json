@@ -34,6 +34,7 @@
     "i18next": "^25.6.0",
     "moment": "^2.30.1",
     "nativewind": "^4.2.1",
+    "patch-package": "^8.0.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-i18next": "^16.1.0",

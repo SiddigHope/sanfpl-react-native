@@ -1,10 +1,14 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://fantasy.premierleague.com/api';
+// let BASE_URL = 'https://api.allorigins.win/raw?url=https://fantasy.premierleague.com/api';
+let BASE_URL = 'https://fantasy.premierleague.com/api';
 
 const api = axios.create({
   baseURL: BASE_URL,
   timeout: 10000,
+  // headers:{
+  //   "Access-Control-Allow-Origin":"http://192.168.8.7:8081/"
+  // }
 });
 
 export const fetchBootstrapData = async () => {

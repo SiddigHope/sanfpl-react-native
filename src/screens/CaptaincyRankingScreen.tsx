@@ -12,11 +12,13 @@ import {
 import PlayerImage from '../components/PlayerImage';
 import { useFPLStore } from '../stores/fplStore';
 import { useEnrichedPlayers } from '../utils/fplCalculations';
+import useNav from '../utils/navigationHelper';
 
 const INITIAL_DISPLAY_COUNT = 10;
 
 export const CaptaincyRankingScreen = () => {
   const navigation = useNavigation();
+  const {navigate} = useNav()
   const [showAll, setShowAll] = useState(false);
   
   const {
@@ -40,7 +42,7 @@ export const CaptaincyRankingScreen = () => {
 
   const renderPlayerItem = ({ item, index }) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate('PlayerInfo', { playerId: item.id })}
+      onPress={() => navigate('PlayerInfo', { playerId: item.id })}
     >
       <ThemedView style={styles.playerCard}>
         {/* <ThemedText style={styles.rank}>{index + 1}</ThemedText> */}

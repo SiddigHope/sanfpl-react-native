@@ -14,11 +14,13 @@ import {
 import EnterTeamIdTextInput from '../components/EnterTeamIdTextInput';
 import { useFPLStore } from '../stores/fplStore';
 import { calculateTeamRating, optimizeTeam, useEnrichedPlayers } from '../utils/fplCalculations';
+import useNav from '../utils/navigationHelper';
 
 const FORMATIONS = ['3-4-3', '3-5-2', '4-4-2', '4-3-3', '4-5-1', '5-4-1', '5-3-2'];
 
 export const TeamRatingScreenOLD = () => {
   const navigation = useNavigation();
+  const {navigate} = useNav()
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currentFormation, setCurrentFormation] = useState('3-4-3');
@@ -128,7 +130,7 @@ export const TeamRatingScreenOLD = () => {
             style={styles.modalOption}
             onPress={() => {
               setShowModal(false);
-              navigation.navigate('PlayerInfo', { playerId: selectedPlayer?.id });
+              navigate('PlayerInfo', { playerId: selectedPlayer?.id });
             }}
           >
             <ThemedText style={styles.modalOptionText}>Player Info</ThemedText>
@@ -138,7 +140,7 @@ export const TeamRatingScreenOLD = () => {
             style={styles.modalOption}
             onPress={() => {
               setShowModal(false);
-              navigation.navigate('Transfers');
+              navigate('Transfers');
             }}
           >
             <ThemedText style={styles.modalOptionText}>Transfer</ThemedText>

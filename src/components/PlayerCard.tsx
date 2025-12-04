@@ -1,7 +1,7 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { useThemeStore } from '../stores/themeStore';
 import PlayerImage from './PlayerImage';
 import TeamLogo from './TeamLogo';
@@ -55,7 +55,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   const theme = useThemeStore((state) => state.theme);
 
   return (
-    <TouchableOpacity onPress={onPress} disabled={!onPress}>
+    <Pressable onPress={onPress} disabled={!onPress}>
       <ThemedView
         style={[styles.container,
         selected && styles.selected,
@@ -77,10 +77,10 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
         {shirt && <TeamShirt image={player?.element_type === 1 ? `${player?.team_code}_1` : player?.team_code} />}
         {player_image && <PlayerImage image={player?.code} />}
         {logo && <TeamLogo code={team} />}
-        <View style={styles.header}>
+        <ThemedView style={styles.header}>
           <ThemedText style={styles.name}>{name}</ThemedText>
           {/* <ThemedText style={styles.team}>{team}</ThemedText> */}
-        </View>
+        </ThemedView>
 
         {opponent_short_name && (
           <View style={styles.detailItem}>
@@ -102,18 +102,18 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
 
         </View>
       </ThemedView>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 12,
+    borderRadius: 6,
     paddingVertical: 5,
     paddingHorizontal: 12,
     marginVertical: 6,
-    marginHorizontal: 6,
-    shadowColor: '#000',
+    marginHorizontal: 3,
+    shadowColor: '#1d0f0fff',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -121,7 +121,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 3,
-    alignItems: 'center'
+    alignItems: 'center',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    // backgroundColor: 'rgba(0, 0, 0, 0.2)',
   },
   selected: {
     borderWidth: 2,
@@ -131,6 +134,7 @@ const styles = StyleSheet.create({
     // flexDirection: 'row',
     // justifyContent: 'space-between',
     alignItems: 'center',
+    width: '100%',
     // marginBottom: 8,
   },
   name: {
