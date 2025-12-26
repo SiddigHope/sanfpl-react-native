@@ -109,9 +109,13 @@ export const PlayerRowStats: React.FC<PlayerRowStatsProps> = ({
             </View> */}
 
             <View style={styles.detailItem}>
+              <ThemedText style={styles.label}>O.By</ThemedText>
+              <ThemedText style={styles.value}>{player.selected_by_percent}%</ThemedText>
+            </View>
+            {/*<View style={styles.detailItem}>
               <ThemedText style={styles.label}>FORM</ThemedText>
               <ThemedText style={styles.value}>{form}</ThemedText>
-            </View>
+            </View>*/}
 
             <View style={styles.detailItem}>
               <Ionicons name={statusIcon.name} size={20} color={statusIcon.color} />
@@ -155,6 +159,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   detailItem: {
+    // flex: 1,
     alignItems: 'center',
   },
   label: {
